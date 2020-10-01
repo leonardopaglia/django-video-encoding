@@ -1,4 +1,4 @@
-from django.db.models.fields.files import (FieldFile, ImageField,
+from django.db.models.fields.files import (FieldFile,
                                            ImageFileDescriptor)
 from django.utils.translation import ugettext as _
 
@@ -18,7 +18,7 @@ class VideoFieldFile(VideoFile, FieldFile):
         super(VideoFieldFile, self).delete(save=save)
 
 
-class VideoField(ImageField):
+class VideoField(FieldFile):
     attr_class = VideoFieldFile
     descriptor_class = VideoFileDescriptor
     description = _("Video")
@@ -29,7 +29,7 @@ class VideoField(ImageField):
         super(VideoField, self).__init__(verbose_name, name, **kwargs)
 
     def check(self, **kwargs):
-        errors = super(ImageField, self).check(**kwargs)
+        errors = super(FieldFile, self).check(**kwargs)
         errors.extend(self._check_backend())
         return errors
 
@@ -39,7 +39,7 @@ class VideoField(ImageField):
 
     def to_python(self, data):
         # use FileField method
-        return super(ImageField, self).to_python(data)
+        return super(FieldFile, self).to_python(data)
 
     def update_dimension_fields(self, instance, force=False, *args, **kwargs):
         _file = getattr(instance, self.attname)
@@ -68,4 +68,4 @@ class VideoField(ImageField):
 
     def formfield(self, **kwargs):
         # use normal FileFieldWidget for now
-        return super(ImageField, self).formfield(**kwargs)
+        return super(FieldFile, self).formfield(**kwargs)
